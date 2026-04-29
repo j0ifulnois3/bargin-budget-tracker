@@ -18,6 +18,7 @@ public class App {
         Scanner scanner = new Scanner(System.in);
         ArrayList<Transaction> transactions = new ArrayList<>();
         while (appRunning) {
+
             System.out.println("Welcome to Joi's Bargain Budget Book!\n");
             System.out.println("Please select from the following menu options:\n" +
                     "To make a deposit, please enter (D)\n" +
@@ -46,10 +47,14 @@ public class App {
                     Transaction t = new Transaction(date, time, description, vendor, amt);
                     transactions.add(t);
 
+                    System.out.println("\n".repeat(10));
                     System.out.println("Deposit Completed on " + date + " at " + time + "\n");
                 }
 
+                System.out.println("\nPress Enter to return to the Main Menu...");
+                scanner.nextLine();
                 break;
+
                 case "P": {
                     String timestamp = getCurrentTimestamp();
                     String[] parts = timestamp.split("\\|");
@@ -70,23 +75,32 @@ public class App {
                     Transaction t = new Transaction(date, time, description, vendor, amt);
                     transactions.add(t);
 
+                    System.out.println("\n".repeat(10));
                     System.out.println("Payment Completed and Logged on " + date + " at " + time + "\n");
                 }
 
+                System.out.println("\nPress Enter to return to the Main Menu...");
+                scanner.nextLine();
                 break;
                 case "B":
-                    double total = 0;
+                    double balance = 0;
                     for (Transaction t : transactions) {
-                        total += t.getAmount();
+                        balance += t.getAmount();
                     }
-                    System.out.printf("Current Account Balance: $%.2f\n", total);
+                    System.out.println("\n".repeat(10));
+                    System.out.printf("Your current balance is: $%.2f\n", balance);
+
+                    System.out.println("\nPress Enter to return to the Main Menu...");
+                    scanner.nextLine();
                     break;
 
                 case "X":
+                    System.out.println("\n".repeat(10));
                     System.out.println("Thank you for using Joi's Bargain Budget Book! Goodbye.");
                     appRunning = false;
                     break;
                 default:
+                    System.out.println("\n".repeat(10));
                     System.out.println("And I Oop, sorry I dont know what you're talking, ");
             }
 
