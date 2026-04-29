@@ -17,6 +17,7 @@ public class App {
         boolean appRunning = true;
         Scanner scanner = new Scanner(System.in);
         ArrayList<Transaction> transactions = new ArrayList<>();
+        loadTransactions(transactions);
         while (appRunning) {
 
             System.out.println("Welcome to Joi's Bargain Budget Book!\n");
@@ -46,6 +47,7 @@ public class App {
 
                     Transaction t = new Transaction(date, time, description, vendor, amt);
                     transactions.add(t);
+                    saveTransaction(t);
 
                     System.out.println("\n".repeat(10));
                     System.out.println("Deposit Completed on " + date + " at " + time + "\n");
@@ -74,6 +76,7 @@ public class App {
 
                     Transaction t = new Transaction(date, time, description, vendor, amt);
                     transactions.add(t);
+                    saveTransaction(t);
 
                     System.out.println("\n".repeat(10));
                     System.out.println("Payment Completed and Logged on " + date + " at " + time + "\n");
@@ -82,17 +85,30 @@ public class App {
                 System.out.println("\nPress Enter to return to the Main Menu...");
                 scanner.nextLine();
                 break;
-                case "B":
-                    double balance = 0;
+                case "B":{
+                    boolean inLedger = true;
+                    double totalBalance = 0;
                     for (Transaction t : transactions) {
-                        balance += t.getAmount();
+                        totalBalance += t.getAmount();
                     }
-                    System.out.println("\n".repeat(10));
-                    System.out.printf("Your current balance is: $%.2f\n", balance);
+                    System.out.printf("\n💰 CURRENT ACCOUNT BALANCE: $%.2f\n", totalBalance);
+                    while (inLedger) {
+                        System.out.println("\n Balance History");
+                        System.out.println("A) All | D) Deposits | P) Payments | R) Reports | H) Home");
+                        String choice = scanner.nextLine().toUpperCase();
 
-                    System.out.println("\nPress Enter to return to the Main Menu...");
-                    scanner.nextLine();
+                        switch (choice) {
+
+                            case "A": displayAll(transactions); break;
+                            case "D": displayDeposits(transactions); break;
+                            case "P": displayPayments(transactions); break;
+                            case "R": runReportsMenu(transactions, scanner); break; // Nesting!
+                            case "H": inLedger = false; break; // Go back to Home
+                            default: System.out.println("And I Oop! Pick a valid letter.");
+                        }
+                    }
                     break;
+                }
 
                 case "X":
                     System.out.println("\n".repeat(10));
@@ -106,6 +122,46 @@ public class App {
 
         }
 
+    }
+
+    private static void runReportsMenu(ArrayList<Transaction> transactions, Scanner scanner) {
+        boolean inReports = true;
+        while (inReports) {
+            System.out.println("\n--- Reports ---");
+            System.out.println("1) Month To Date");
+            System.out.println("2) Previous Month");
+            System.out.println("3) Year To Date");
+            System.out.println("4) Previous Year");
+            System.out.println("5) Search by Vendor");
+            System.out.println("0) Back");
+
+            System.out.print("Select a report: ");
+            String reportChoice = scanner.nextLine();
+
+            if (reportChoice.equals("0")) {
+                inReports = false; // This sends you back to the Ledger menu
+            } else {
+                System.out.println("\nThis report is coming in the next update! ✨");
+            }
+        }
+    }
+
+    private static void displayPayments(ArrayList<Transaction> transactions) {
+        System.out.println("\n All Deposits \n");
+        for (Transaction t: transactions){
+            if (t.getAmount()< 0){
+                System.out.println(t.getDate() + "|" + t.getDescription() + "| $" + t.getAmount());
+            }
+        }
+    }
+
+    private static void displayDeposits(ArrayList<Transaction> transactions) {
+        System.out.println("\n All Deposits \n");
+        for (Transaction t: transactions){
+            if (t.getAmount()> 0){
+                System.out.println(t.getDate() + "|" + t.getDescription() + "| $" + t.getAmount());
+            }
+        }
     }
 
     public static String getCurrentTimestamp() {
@@ -123,12 +179,18 @@ public class App {
             BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
             String line;
             while ((line = reader.readLine()) != null) {
+
+                if (line.toLowerCase().contains("date")) {
+                    continue;
+                }
+
                 String[] parts = line.split("\\|");
-                // Map the parts back to the constructor: date, time, desc, vendor, amount
+
                 double amount = Double.parseDouble(parts[4]);
                 Transaction t = new Transaction(parts[0], parts[1], parts[2], parts[3], amount);
                 transactions.add(t);
             }
+
             reader.close();
         } catch (IOException e) {
             System.out.println("No previous history found. Starting a fresh book!");
@@ -150,6 +212,28 @@ public class App {
             System.out.println("And I Oop! I couldn't save that record, girl.");
         }
     }
+
+    public static void displayAll(ArrayList<Transaction> transactions) {
+        System.out.println("\n--- Your Transaction History ---");
+
+        
+        for (Transaction t : transactions) {
+            System.out.println(t.getDate() + " | " +
+                    t.getTime() + " | " +
+                    t.getDescription() + " | " +
+                    t.getVendor() + " | $" +
+                    t.getAmount());
+        }
+
+
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions found. Your bag is empty! 👜");
+        }
+    }
+
+
+
+
 
 
 }
