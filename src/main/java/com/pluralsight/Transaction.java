@@ -114,17 +114,10 @@ public class Transaction {
                                     t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
                         }
                     }
-                    if (!found) {
-                        System.out.println("\nAnd I Oop! I couldn't find any transactions for: " + search);
-                        System.out.println("Redirecting you back to the Reports Menu...");
-                    }
-
                     break;
                 case "0":
                     reporting = false; // Sends you back to the Ledger menu
                     break;
-                    if (!found){System.out.println("Incorrect Value. Please try again.");
-                    }
             }
         }
     }
