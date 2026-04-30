@@ -23,7 +23,11 @@ public class NewApp {
     public static void main(String[] args) {
 
         boolean appRunning = true;
-        loadTransactions(transactions);
+        try {
+            loadTransactions(transactions);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         while (appRunning) {
 
@@ -31,7 +35,7 @@ public class NewApp {
             System.out.println("Please select from the following menu options:\n" +
                     "To enter a deposit, please enter (D)\n" +
                     "To log a payment, please enter (P)\n" +
-                    "To check your account balance and transaction history, please enter (B)\n" +
+                    "To view account ledger, please enter (L)\n" +
                     "To exit, please enter (X)\n");
 
             String userSelection = scanner.nextLine().toUpperCase();
@@ -42,13 +46,15 @@ public class NewApp {
                 case "P":
                     displayPaymentScreen();
                     break;
-                case "B":
+                case "L":
                     displayLedgerScreen();
                     break;
                 case "X":
                     appRunning = false;
                     System.out.println("Thank you for using my budget book, Enjoi your day !");
                     break;
+                default:
+                    System.out.println("\nAnd I Oop! That's not a valid option. Redirecting to Main Menu...");
             }
         }
     }
@@ -119,19 +125,22 @@ public class NewApp {
 
     private static void displayLedgerScreen() {
         boolean inLedger = true;
+
+
         double totalBalance = 0;
         for (Transaction t : transactions) {
             totalBalance += t.getAmount();
         }
+
         System.out.printf("\n CURRENT ACCOUNT BALANCE: $%.2f\n", totalBalance);
 
         while (inLedger) {
+
             System.out.println("\n View Account Details");
             System.out.println("A) All | D) Deposits | P) Payments | R) Reports | H) Home");
             String choice = scanner.nextLine().toUpperCase();
 
             switch (choice) {
-
                 case "A":
                     Transaction.displayAll(transactions);
                     break;
@@ -142,6 +151,7 @@ public class NewApp {
                     Transaction.displayPayments(transactions);
                     break;
                 case "R":
+                    // This is your next big step for 100% completion!
                     Transaction.runReportsMenu(transactions, scanner);
                     break;
                 case "H":
@@ -150,26 +160,41 @@ public class NewApp {
                 default:
                     System.out.println("And I Oop! Pick a valid letter.");
             }
-
-
         }
     }
 
     private static void loadTransactions(ArrayList<Transaction> transactions) throws IOException {
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // 1. Skip completely empty lines or the header row
+                    if (line.trim().isEmpty() || line.toLowerCase().contains("date")) continue;
 
-            BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.toLowerCase().contains("date")) continue;
-                String[] parts = line.split("\\|");
+                    String[] parts = line.split("\\|");
 
-                System.out.println("And I Oop! I couldn't load that record, girl.");
+                    // 2. THE SECURITY GUARD: Only proceed if there are at least 5 columns
+                    if (parts.length < 5) {
+                        continue; // Skip messy or incomplete lines
+                    }
 
-                double amount = Double.parseDouble(parts[4]);
-                transactions.add(new Transaction(parts[0], parts[1], parts[2], parts[3], parts[4]));
+                    try {
+                        // 3. Convert the 5th column (Index 4) to a double
+                        double amount = Double.parseDouble(parts[4].trim());
 
+                        // 4. Create the object with the correct data types
+                        transactions.add(new Transaction(parts[0].trim(), parts[1].trim(),
+                                parts[2].trim(), parts[3].trim(), amount));
+                    } catch (NumberFormatException e) {
+                        // This skips lines where the amount isn't a valid number
+                        System.out.println("⚠️ Skipping line with bad amount: " + line);
+                    }
+                }
+                reader.close();
+            } catch (IOException e) {
+                System.out.println("And I Oop! I couldn't find your budget book file.");
             }
-    }
+        }
 
     public static void saveTransaction (Transaction t){
         try {
