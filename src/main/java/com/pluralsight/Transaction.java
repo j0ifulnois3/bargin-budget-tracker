@@ -10,6 +10,9 @@ public class Transaction {
     private String vendor;
     private double amount;
 
+    public Transaction(String part, String part1, String part2, String part3, String part4) {
+    }
+
     public static void displayAll(ArrayList<Transaction> transactions) {
     }
 

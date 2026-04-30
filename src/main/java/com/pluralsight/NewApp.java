@@ -3,6 +3,7 @@ package com.pluralsight;
 import com.sun.tools.javac.Main;
 
 import java.awt.*;
+import java.nio.channels.ScatteringByteChannel;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.time.LocalDate;
@@ -51,7 +52,6 @@ public class NewApp {
             }
         }
     }
-
 
 
 //                                              - END OF MAIN -
@@ -154,30 +154,24 @@ public class NewApp {
 
         }
     }
-    public static void loadTransactions(ArrayList<Transaction> transactions) {
-        try {
+
+    private static void loadTransactions(ArrayList<Transaction> transactions) throws IOException {
+
             BufferedReader reader = new BufferedReader(new FileReader("transactions.csv"));
             String line;
             while ((line = reader.readLine()) != null) {
-
-                if (line.toLowerCase().contains("date")) {
-                    continue;
-                }
-
+                if (line.toLowerCase().contains("date")) continue;
                 String[] parts = line.split("\\|");
 
-                double amount = Double.parseDouble(parts[4]);
-                Transaction t = new Transaction(parts[0], parts[1], parts[2], parts[3], amount);
-                transactions.add(t);
-            }
+                System.out.println("And I Oop! I couldn't load that record, girl.");
 
-            reader.close();
-        } catch (IOException e) {
-            System.out.println("No previous history found. Starting a fresh book!");
-        }
+                double amount = Double.parseDouble(parts[4]);
+                transactions.add(new Transaction(parts[0], parts[1], parts[2], parts[3], parts[4]));
+
+            }
     }
 
-    public static void saveTransaction(Transaction t) {
+    public static void saveTransaction (Transaction t){
         try {
 
             BufferedWriter writer = new BufferedWriter(new FileWriter("transactions.csv", true));
@@ -192,19 +186,13 @@ public class NewApp {
             System.out.println("And I Oop! I couldn't save that record, girl.");
         }
     }
-    public static String getCurrentTimestamp() {
+
+    public static String getCurrentTimestamp () {
         LocalDate date = LocalDate.now();
         LocalTime time = LocalTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         return date.format(dateFormatter) + "|" + time.format(timeFormatter);
     }
-
-
-
-
-
-
-
-
 }
+
