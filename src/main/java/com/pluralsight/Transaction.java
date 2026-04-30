@@ -1,11 +1,26 @@
 package com.pluralsight;
 
+import java.util.ArrayList;
+import java.util.Scanner;
+
 public class Transaction {
     private String date;
     private String time;
     private String description;
     private String vendor;
     private double amount;
+
+    public static void displayAll(ArrayList<Transaction> transactions) {
+    }
+
+    public static void displayDeposits(ArrayList<Transaction> transactions) {
+    }
+
+    public static void displayPayments(ArrayList<Transaction> transactions) {
+    }
+
+    public static void runReportsMenu(ArrayList<Transaction> transactions, Scanner scanner) {
+    }
 
     public String getDate() {
         return date;
