@@ -13,19 +13,24 @@ import java.io.FileReader;
 
 public class App {
 
+
+    Scanner scanner = new Scanner(System.in);
+    ArrayList<Transaction> transactions = new ArrayList<>();
+
     public static void main(String[] args) {
+
         boolean appRunning = true;
-        Scanner scanner = new Scanner(System.in);
-        ArrayList<Transaction> transactions = new ArrayList<>();
         loadTransactions(transactions);
+
         while (appRunning) {
 
-            System.out.println("Welcome to Joi's Bargain Budget Book!\n");
+            System.out.println("Welcome to Joi's Buisness Budget Book!\n");
             System.out.println("Please select from the following menu options:\n" +
-                    "To make a deposit, please enter (D)\n" +
-                    "To make a payment, please enter (P)\n" +
-                    "To check your account balance, please enter (B)\n" +
-                    "To exit the app, please enter (X)\n");
+                    "To enter a deposit, please enter (D)\n" +
+                    "To log a payment, please enter (P)\n" +
+                    "To check your account balance and transaction history, please enter (B)\n" +
+                    "To exit, please enter (X)\n");
+
             String userSelection = scanner.nextLine().toUpperCase();
 
             switch (userSelection) {
@@ -93,7 +98,7 @@ public class App {
                     }
                     System.out.printf("\n💰 CURRENT ACCOUNT BALANCE: $%.2f\n", totalBalance);
                     while (inLedger) {
-                        System.out.println("\n Balance History");
+                        System.out.println("\n View Account Details");
                         System.out.println("A) All | D) Deposits | P) Payments | R) Reports | H) Home");
                         String choice = scanner.nextLine().toUpperCase();
 
@@ -102,8 +107,8 @@ public class App {
                             case "A": displayAll(transactions); break;
                             case "D": displayDeposits(transactions); break;
                             case "P": displayPayments(transactions); break;
-                            case "R": runReportsMenu(transactions, scanner); break; // Nesting!
-                            case "H": inLedger = false; break; // Go back to Home
+                            case "R": runReportsMenu(transactions, scanner); break;
+                            case "H": inLedger = false; break;
                             default: System.out.println("And I Oop! Pick a valid letter.");
                         }
                     }
@@ -136,15 +141,65 @@ public class App {
             System.out.println("0) Back");
 
             System.out.print("Select a report: ");
-            String reportChoice = scanner.nextLine();
+            String choice = scanner.nextLine();
+            LocalDate today = LocalDate.now();
 
-            if (reportChoice.equals("0")) {
-                inReports = false; // This sends you back to the Ledger menu
-            } else {
-                System.out.println("\nThis report is coming in the next update! ✨");
+            switch (choice) {
+                case "1": // Month to Date
+                    System.out.println("\n--- Month to Date ---");
+                    for (Transaction t : transactions) {
+                        LocalDate tDate = LocalDate.parse(t.getDate());
+                        if (tDate.getMonthValue() == today.getMonthValue() && tDate.getYear() == today.getYear()) {
+                            displayTransaction(t);
+                        }
+                    }
+                    break;
+
+                case "2": // Previous Month
+                    System.out.println("\n--- Previous Month ---");
+                    LocalDate lastMonth = today.minusMonths(1);
+                    for (Transaction t : transactions) {
+                        LocalDate tDate = LocalDate.parse(t.getDate());
+                        if (tDate.getMonthValue() == lastMonth.getMonthValue() && tDate.getYear() == lastMonth.getYear()) {
+                            displayTransaction(t);
+                        }
+                    }
+                    break;
+
+                case "5": // Search by Vendor
+                    System.out.print("Enter Vendor Name: ");
+                    String search = scanner.nextLine();
+                    System.out.println("\n--- Results for: " + search + " ---");
+                    for (Transaction t : transactions) {
+                        if (t.getVendor().equalsIgnoreCase(search)) {
+                            displayTransaction(t);
+                        }
+                    }
+                    break;
+
+                case "0":
+                    inReports = false;
+                    break;
+
+                default:
+                    System.out.println("And I Oop! Not a valid report option.");
             }
         }
     }
+
+    private static void displayTransaction(Transaction t) {
+        System.out.printf("%s | %s | %-20s | %-15s | $%.2f\n",
+                t.getDate(), t.getTime(), t.getDescription(), t.getVendor(), t.getAmount());
+    }
+
+
+            if (reportChoice.equals("0")) {
+                inReports = false;
+            } else {
+                System.out.println("\nThis report is coming in the next update!");
+            }
+        }
+
 
     private static void displayPayments(ArrayList<Transaction> transactions) {
         System.out.println("\n All Deposits \n");
@@ -227,7 +282,7 @@ public class App {
 
 
         if (transactions.isEmpty()) {
-            System.out.println("No transactions found. Your bag is empty! 👜");
+            System.out.println("No transactions found. Your bag is empty!");
         }
     }
 
