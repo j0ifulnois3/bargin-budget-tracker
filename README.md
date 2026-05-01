@@ -1,12 +1,19 @@
 Joi's Business Budget Book
 Capstone 1: Accounting Ledger Application
 
+
+
+
 Application Setup
 Open Project: Load the project folder in IntelliJ IDEA.
 
 File Placement: Ensure transactions.csv is located in the root directory (the main project folder) so the loadTransactions method can access the data.
 
 Execution: Run the NewApp.java class to begin the session.
+
+
+
+
 
 Functional Overview
 Main Menu
@@ -29,6 +36,10 @@ R (Reports): Navigates to the Reports Sub-Menu.
 
 H (Home): Returns to the Main Menu.
 
+
+
+
+
 Reports Menu
 1 - 4: Filters transactions by specific date ranges (Month to Date, Previous Month, Year to Date, or Previous Year).
 
@@ -43,5 +54,11 @@ Formatting: Currency is displayed using formatted strings to ensure two decimal 
 
 Data Integrity: The application includes logic to skip empty or malformed lines within the CSV file during the loading process.
 
+
+
+
+
 Author: Joi McBrayer
+
+
 Email: j0ifulnois3@gmail.com 
