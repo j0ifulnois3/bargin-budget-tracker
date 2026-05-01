@@ -43,9 +43,5 @@ Formatting: Currency is displayed using formatted strings to ensure two decimal 
 
 Data Integrity: The application includes logic to skip empty or malformed lines within the CSV file during the loading process.
 
-Final Steps
-Create a new file in your project root named README.md.
-
-Paste the text above into the file.
-
-Save the file and push the changes to your GitHub repository before your presentation tomorrow.
+Author: Joi McBrayer
+Email: j0ifulnois3@gmail.com 
